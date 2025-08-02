@@ -1,9 +1,12 @@
 
-// Particle animation
-function createParticles() {
+// Galaxy animation with particles, stars, and shooting stars
+function createGalaxyEffect() {
     const particlesContainer = document.getElementById('particles');
     const numberOfParticles = 50;
+    const numberOfStars = 100;
+    const numberOfShootingStars = 5;
 
+    // Create particles (dust)
     for (let i = 0; i < numberOfParticles; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
@@ -23,21 +26,167 @@ function createParticles() {
         // Random animation duration
         particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
         
+        // Random color (purplish hues for galaxy effect)
+        const hue = Math.floor(Math.random() * 60) + 240; // Blue to purple range
+        const saturation = Math.floor(Math.random() * 50) + 50;
+        const lightness = Math.floor(Math.random() * 30) + 70;
+        particle.style.backgroundColor = `hsla(${hue}, ${saturation}%, ${lightness}%, 0.7)`;
+        
         particlesContainer.appendChild(particle);
+    }
+    
+    // Create stars
+    for (let i = 0; i < numberOfStars; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Random size (smaller than particles)
+        const size = Math.random() * 2 + 0.5;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        
+        // Random position
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        
+        // Random animation delay
+        star.style.animationDelay = Math.random() * 3 + 's';
+        
+        particlesContainer.appendChild(star);
+    }
+    
+    // Create shooting stars with random intervals
+    function createShootingStar() {
+        const shootingStar = document.createElement('div');
+        shootingStar.className = 'shooting-star';
+        
+        // Random position (always starts from left side)
+        shootingStar.style.left = Math.random() * 30 + '%';
+        shootingStar.style.top = Math.random() * 50 + '%';
+        
+        // Random animation duration
+        shootingStar.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        
+        particlesContainer.appendChild(shootingStar);
+        
+        // Remove shooting star after animation completes
+        setTimeout(() => {
+            shootingStar.remove();
+            // Create a new one
+            setTimeout(createShootingStar, Math.random() * 5000 + 2000);
+        }, 4000);
+    }
+    
+    // Initialize shooting stars with random delays
+    for (let i = 0; i < numberOfShootingStars; i++) {
+        setTimeout(createShootingStar, Math.random() * 5000);
     }
 }
 
-// Card hover effects
+// Add background music with autoplay
+function addBackgroundMusic() {
+    const musicContainer = document.createElement('div');
+    musicContainer.id = 'music-container';
+    musicContainer.style.position = 'fixed';
+    musicContainer.style.bottom = '20px';
+    musicContainer.style.right = '20px';
+    musicContainer.style.zIndex = '1000';
+    
+    const audioElement = document.createElement('audio');
+    audioElement.id = 'background-music';
+    audioElement.loop = true;
+    audioElement.volume = 0.3; // Set initial volume to 30%
+    
+    // YouTube embed as source (using YouTube's iframe API)
+    const youtubeID = 'GkQn5vNoc24'; // Bundak Sa Letra by NoPetsAllowed
+    
+    // Create a button to toggle music
+    const musicButton = document.createElement('button');
+    musicButton.innerHTML = '<i class="fas fa-pause"></i> Pause Music'; // Changed to show pause initially
+    musicButton.style.background = 'linear-gradient(45deg, #8a2be2, #4b0082)';
+    musicButton.style.color = 'white';
+    musicButton.style.border = 'none';
+    musicButton.style.borderRadius = '25px';
+    musicButton.style.padding = '10px 20px';
+    musicButton.style.cursor = 'pointer';
+    musicButton.style.boxShadow = '0 4px 15px rgba(138, 43, 226, 0.3)';
+    musicButton.style.display = 'flex';
+    musicButton.style.alignItems = 'center';
+    musicButton.style.gap = '8px';
+    
+    // Add YouTube iframe (hidden) with autoplay=1 and muted=1 (required for autoplay in most browsers)
+    const youtubeIframe = document.createElement('iframe');
+    youtubeIframe.id = 'youtube-player';
+    youtubeIframe.style.display = 'none';
+    youtubeIframe.width = '0';
+    youtubeIframe.height = '0';
+    youtubeIframe.src = `https://www.youtube.com/embed/${youtubeID}?enablejsapi=1&autoplay=1&controls=0&mute=1`;
+    youtubeIframe.allow = 'autoplay; encrypted-media';
+    
+    // Load YouTube API
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    
+    // Make player accessible globally for the unmute functionality
+    window.player = null;
+    window.onYouTubeIframeAPIReady = function() {
+        window.player = new YT.Player('youtube-player', {
+            events: {
+                'onReady': onPlayerReady
+            }
+        });
+    };
+    
+    function onPlayerReady(event) {
+        // Start playing automatically (will be muted initially due to browser restrictions)
+        player.playVideo();
+        
+        // Update button text to show music is muted initially
+        musicButton.innerHTML = '<i class="fas fa-volume-mute"></i> Unmute Music';
+        
+        // Music button click handler
+        musicButton.addEventListener('click', function() {
+            if (player.getPlayerState() === YT.PlayerState.PLAYING && !player.isMuted()) {
+                // If playing and not muted, pause the video
+                player.pauseVideo();
+                musicButton.innerHTML = '<i class="fas fa-music"></i> Play Music';
+            } else if (player.getPlayerState() === YT.PlayerState.PLAYING && player.isMuted()) {
+                // If playing but muted, unmute the video
+                player.unMute();
+                player.setVolume(30); // Set to 30% volume
+                musicButton.innerHTML = '<i class="fas fa-pause"></i> Pause Music';
+            } else if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                // If not playing, play and unmute
+                player.playVideo();
+                player.unMute();
+                player.setVolume(30); // Set to 30% volume
+                musicButton.innerHTML = '<i class="fas fa-pause"></i> Pause Music';
+            }
+        });
+    }
+    
+    musicContainer.appendChild(youtubeIframe);
+    musicContainer.appendChild(musicButton);
+    document.body.appendChild(musicContainer);
+}
+
+// Card hover effects with galaxy theme
 function addCardEffects() {
     const cards = document.querySelectorAll('.card');
     
     cards.forEach(card => {
         card.addEventListener('mouseenter', function() {
-            this.style.background = 'rgba(255, 255, 255, 0.08)';
+            this.style.background = 'rgba(138, 43, 226, 0.15)';
+            this.style.boxShadow = '0 0 20px rgba(138, 43, 226, 0.3)';
+            this.style.transform = 'translateY(-5px)';
         });
         
         card.addEventListener('mouseleave', function() {
             this.style.background = 'rgba(255, 255, 255, 0.05)';
+            this.style.boxShadow = 'none';
+            this.style.transform = 'translateY(0)';
         });
     });
 }
@@ -410,12 +559,16 @@ function addDropdownEffect() {
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    createParticles();
+    createGalaxyEffect();
     addCardEffects();
     addButtonEffects();
     addSmoothScroll();
     addTitleEffect();
-    addDropdownEffect();
+    addBackgroundMusic();
+    
+    if (typeof addDropdownEffect === 'function') {
+        addDropdownEffect();
+    }
     
     // Add CSS for ripple effect
     const style = document.createElement('style');

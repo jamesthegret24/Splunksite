@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Splunk #1 - Dashboard</title>
+    <title>SPLUNK - Dashboard</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -25,13 +25,14 @@
                 </div>
                 <div class="card-body">
                     <p class="description">
-                        SPLUNK  -  IMMORTAL  -  INJURIES
+                        This Website Was Too Exclusive Secure Feature Auto Authenticator Auto Age Changer auto Remove Security
                     </p>
-                    <a href="https://splunkwebsite.vercel.app/" target="_blank" class="action-btn primary">
+                    <a href="https://app.splunk.gg/u/SplunkProV3" target="_blank" class="action-btn primary">
                         <i class="fas fa-external-link-alt"></i> WEBSITE
                     </a>
                 </div>
             </div>
+
 
             <div class="card">
                 <div class="card-header">
@@ -40,40 +41,10 @@
                 </div>
                 <div class="card-body">
                     <p class="description">
-                        ALL AGE BYPASSER WORKING ON 13+ ACCOUNT
+                        This Tools Was For EMAIL REMOVER BYPASS RATE 100% Working Properly
                     </p>
                     <a href="https://tinyurl.com/yu9wxrex" target="_blank" class="action-btn secondary">
-                        <i class="fas fa-external-link-alt"></i> BYPASSER
-                    </a>
-                </div>
-            </div>
-            
-                        <div class="card">
-                <div class="card-header">
-                    <h3>URBAN VPN</h3>
-                    <i class="fas fa-globe"></i>
-                </div>
-                <div class="card-body">
-                    <p class="description">
-                        USE THIS VPN IF THE OTHER SITE'S DIDNT LOAD
-                    </p>
-                    <a href="https://www.urban-vpn.com/" target="_blank" class="action-btn secondary">
-                        <i class="fas fa-external-link-alt"></i> URBAN VPN
-                    </a>
-                </div>
-            </div>
-           
-                        <div class="card">
-                <div class="card-header">
-                    <h3>COOKIE EDITOR</h3>
-                    <i class="fas fa-globe"></i>
-                </div>
-                <div class="card-body">
-                    <p class="description">
-                        COOKIE EDITOR ITS VERY USEFUL
-                    </p>
-                    <a href="https://cookie-editor.com/" target="_blank" class="action-btn secondary">
-                        <i class="fas fa-external-link-alt"></i> COOKIE EDITOR
+                        <i class="fas fa-unlock"></i> BYPASSER
                     </a>
                 </div>
             </div>
@@ -87,11 +58,13 @@
                     <p class="description">
                         Advanced link hiding tool for enhanced privacy and security protection
                     </p>
-                    <a href="https://shortenerv2.vercel.app/" target="_blank" class="action-btn tertiary">
+                    <a href="https://variares-hyperlink-9jmo2y.vercel.app/" target="_blank" class="action-btn tertiary">
                         <i class="fas fa-link"></i> LINK HIDER
                     </a>
                 </div>
             </div>
+        </main>
+               
 
         </div>
 
@@ -107,6 +80,32 @@
     </div>
 
     <div class="particles" id="particles"></div>
+    
+    <!-- YouTube API for background music -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        // This function will unmute the background music when user interacts with the page
+        document.addEventListener('click', function() {
+            // Try to unmute the YouTube player after user interaction
+            try {
+                if (typeof YT !== 'undefined' && YT.Player && window.player && window.player.unMute) {
+                    // If the player exists and is muted, unmute it
+                    if (window.player.isMuted && window.player.isMuted()) {
+                        window.player.unMute();
+                        window.player.setVolume(30);
+                        
+                        // Update the music button text if it exists
+                        const musicButton = document.querySelector('#music-container button');
+                        if (musicButton) {
+                            musicButton.innerHTML = '<i class="fas fa-pause"></i> Pause Music';
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log('Could not unmute player yet:', e);
+            }
+        }, { once: true });
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
