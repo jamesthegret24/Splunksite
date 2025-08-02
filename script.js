@@ -108,8 +108,9 @@ function createHellEffect() {
     }
 }
 
-// Add background music with autoplay
+// Add background music with autoplay using YouTube iframe API
 function addBackgroundMusic() {
+    console.log('Adding background music with YouTube iframe API');
     const musicContainer = document.createElement('div');
     musicContainer.id = 'music-container';
     musicContainer.style.position = 'fixed';
@@ -117,17 +118,42 @@ function addBackgroundMusic() {
     musicContainer.style.right = '20px';
     musicContainer.style.zIndex = '1000';
     
-    const audioElement = document.createElement('audio');
-    audioElement.id = 'background-music';
-    audioElement.loop = true;
-    audioElement.volume = 0.3; // Set initial volume to 30%
+    // Create a hidden YouTube player for the music
+    const youtubeID = 'GkQn5vNoc24'; // Bundak sa letra - Nopetsallowed
     
-    // YouTube embed as source (using YouTube's iframe API)
-    const youtubeID = 'R9zOeysfyMQ'; // Nateman - DEMON TIME feat. J. Cipher
+    // Create a direct iframe for the YouTube player
+     const playerIframe = document.createElement('iframe');
+     playerIframe.id = 'youtube-player';
+     playerIframe.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&mute=1&enablejsapi=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&rel=0`;
+     playerIframe.allow = 'autoplay; encrypted-media';
+     playerIframe.style.position = 'fixed';
+     playerIframe.style.bottom = '20px';
+     playerIframe.style.left = '20px';
+     playerIframe.style.width = '100px';
+     playerIframe.style.height = '100px';
+     playerIframe.style.opacity = '0.3';
+     playerIframe.style.pointerEvents = 'none';
+     playerIframe.style.zIndex = '1';
+     playerIframe.style.border = 'none';
+     document.body.appendChild(playerIframe);
+    
+    // Create a backup div for the YouTube API player
+    const playerDiv = document.createElement('div');
+    playerDiv.id = 'youtube-api-player';
+    playerDiv.style.display = 'none';
+    document.body.appendChild(playerDiv);
+    
+    // Create a fallback audio element
+    const audioElement = document.createElement('audio');
+    audioElement.id = 'fallback-audio';
+    audioElement.src = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'; // Fallback audio
+    audioElement.style.display = 'none';
+    audioElement.loop = true;
+    document.body.appendChild(audioElement);
     
     // Create a button to toggle music
     const musicButton = document.createElement('button');
-    musicButton.innerHTML = '<i class="fas fa-pause"></i> DEMON TIME'; // Updated for the new song
+    musicButton.innerHTML = '<i class="fas fa-volume-mute"></i> UNMUTE BUNDAK';
     musicButton.style.background = 'linear-gradient(45deg, #aa0000, #660000)';
     musicButton.style.color = 'white';
     musicButton.style.border = '1px solid rgba(255, 100, 0, 0.4)';
@@ -158,64 +184,230 @@ function addBackgroundMusic() {
         musicButton.appendChild(fireGlow);
     };
     
-    addFireGlow();
+    // Load YouTube API if not already loaded
+    if (!window.YT) {
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
     
-    // Add YouTube iframe (hidden) with autoplay=1 and muted=1 (required for autoplay in most browsers)
-    const youtubeIframe = document.createElement('iframe');
-    youtubeIframe.id = 'youtube-player';
-    youtubeIframe.style.display = 'none';
-    youtubeIframe.width = '0';
-    youtubeIframe.height = '0';
-    youtubeIframe.src = `https://www.youtube.com/embed/${youtubeID}?enablejsapi=1&autoplay=1&controls=0&mute=1`;
-    youtubeIframe.allow = 'autoplay; encrypted-media';
-    
-    // Load YouTube API
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    
-    // Make player accessible globally for the unmute functionality
-    window.player = null;
+    // Create YouTube player when API is ready
+    let player;
     window.onYouTubeIframeAPIReady = function() {
-        window.player = new YT.Player('youtube-player', {
+        console.log('YouTube API ready, creating player');
+        player = new YT.Player('youtube-api-player', {
+            height: '1',  // Small but not zero to ensure it loads
+            width: '1',   // Small but not zero to ensure it loads
+            videoId: youtubeID,
+            playerVars: {
+                'autoplay': 1,  // Try to autoplay
+                'controls': 0,
+                'disablekb': 1,
+                'enablejsapi': 1,
+                'fs': 0,
+                'modestbranding': 1,
+                'iv_load_policy': 3,
+                'rel': 0,
+                'mute': 1  // Start muted to help with autoplay
+            },
             events: {
-                'onReady': onPlayerReady
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange,
+                'onError': onPlayerError
             }
         });
     };
     
+    // Handle player ready event
     function onPlayerReady(event) {
-        // Start playing automatically (will be muted initially due to browser restrictions)
-        player.playVideo();
+        console.log('YouTube player ready');
+        player.setVolume(30); // Set volume to 30%
         
-        // Update button text to show music is muted initially
-        musicButton.innerHTML = '<i class="fas fa-volume-mute"></i> UNMUTE DEMON TIME';
+        // Try to play immediately (will be muted due to autoplay restrictions)
+        try {
+            player.playVideo();
+            console.log('Initial play attempt (will be muted)');
+        } catch (e) {
+            console.error('Error during initial play attempt:', e);
+        }
         
-        // Music button click handler
-        musicButton.addEventListener('click', function() {
-            if (player.getPlayerState() === YT.PlayerState.PLAYING && !player.isMuted()) {
-                // If playing and not muted, pause the video
-                player.pauseVideo();
-                musicButton.innerHTML = '<i class="fas fa-music"></i> PLAY DEMON TIME';
-            } else if (player.getPlayerState() === YT.PlayerState.PLAYING && player.isMuted()) {
-                // If playing but muted, unmute the video
+        // Add event listener to unmute audio on first user interaction with the page
+        document.addEventListener('click', function() {
+            console.log('Document clicked - attempting to play audio');
+            
+            // Unmute and play the API player
+            if (player) {
                 player.unMute();
-                player.setVolume(30); // Set to 30% volume
-                musicButton.innerHTML = '<i class="fas fa-pause"></i> DEMON TIME';
-            } else if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-                // If not playing, play and unmute
                 player.playVideo();
-                player.unMute();
-                player.setVolume(30); // Set to 30% volume
-                musicButton.innerHTML = '<i class="fas fa-pause"></i> DEMON TIME';
             }
-        });
+            
+            // Unmute and play the iframe
+            const iframe = document.getElementById('youtube-player');
+            if (iframe) {
+                // Replace the iframe with one that has autoplay and unmuted
+                const newIframe = document.createElement('iframe');
+                newIframe.id = 'youtube-player';
+                newIframe.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&mute=0&enablejsapi=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&rel=0`;
+                newIframe.allow = 'autoplay; encrypted-media';
+                newIframe.style.position = 'fixed';
+                newIframe.style.bottom = '20px';
+                newIframe.style.left = '20px';
+                newIframe.style.width = '100px';
+                newIframe.style.height = '100px';
+                newIframe.style.opacity = '0.3';
+                newIframe.style.pointerEvents = 'none';
+                newIframe.style.zIndex = '1';
+                newIframe.style.border = 'none';
+                iframe.parentNode.replaceChild(newIframe, iframe);
+            }
+            
+            // Play the fallback audio
+            const audio = document.getElementById('fallback-audio');
+            if (audio) {
+                try {
+                    audio.play()
+                        .then(() => console.log('Fallback audio playing on first interaction'))
+                        .catch(e => console.error('Fallback audio error on first interaction:', e));
+                } catch (e) {
+                    console.error('Error playing fallback audio on first interaction:', e);
+                }
+            }
+            
+            musicButton.innerHTML = '<i class="fas fa-pause"></i> BUNDAK';
+        }, { once: true });
     }
     
-    musicContainer.appendChild(youtubeIframe);
+    // Handle player state changes
+    function onPlayerStateChange(event) {
+        console.log('Player state changed:', event.data);
+    }
+    
+    // Handle player errors
+    function onPlayerError(event) {
+        console.error('YouTube player error:', event.data);
+        
+        // Provide more detailed error information
+        let errorMessage = 'Unknown error';
+        switch(event.data) {
+            case 2:
+                errorMessage = 'Invalid video ID';
+                break;
+            case 5:
+                errorMessage = 'HTML5 player error';
+                break;
+            case 100:
+                errorMessage = 'Video not found or removed';
+                break;
+            case 101:
+            case 150:
+                errorMessage = 'Video embedding not allowed';
+                break;
+        }
+        console.error('Error details:', errorMessage);
+        
+        // Try to recover by using a fallback video
+        if (event.data === 2 || event.data === 100) {
+            console.log('Attempting to use fallback video...');
+            player.loadVideoById('iFPfmBcz2cI'); // Alternative Bundak Sa Letra video
+        }
+    }
+    
+    // Music button click handler
+    musicButton.addEventListener('click', function() {
+        console.log('Music button clicked');
+        
+        // Get the iframe element
+        const iframe = document.getElementById('youtube-player');
+        
+        // Get the fallback audio element
+        const audio = document.getElementById('fallback-audio');
+        
+        // Check if we're currently playing or paused
+        const isPlaying = musicButton.innerHTML.includes('PAUSE') || 
+                         (player && player.getPlayerState() === YT.PlayerState.PLAYING);
+        
+        if (isPlaying) {
+            // If playing, pause
+            if (player) {
+                player.pauseVideo();
+            }
+            
+            // Pause the iframe by removing and re-adding it without autoplay
+            if (iframe) {
+                const newIframe = document.createElement('iframe');
+                newIframe.id = 'youtube-player';
+                newIframe.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=0&mute=1&enablejsapi=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&rel=0`;
+                newIframe.allow = 'autoplay; encrypted-media';
+                newIframe.style.position = 'fixed';
+                 newIframe.style.bottom = '20px';
+                 newIframe.style.left = '20px';
+                 newIframe.style.width = '100px';
+                 newIframe.style.height = '100px';
+                 newIframe.style.opacity = '0.3';
+                newIframe.style.pointerEvents = 'none';
+                newIframe.style.zIndex = '1';
+                newIframe.style.border = 'none';
+                iframe.parentNode.replaceChild(newIframe, iframe);
+            }
+            
+            // Pause the fallback audio
+            if (audio) {
+                audio.pause();
+            }
+            
+            musicButton.innerHTML = '<i class="fas fa-music"></i> PLAY BUNDAK';
+            console.log('Audio paused');
+        } else {
+            // If paused or not started, play
+            if (player) {
+                player.playVideo();
+                player.unMute();
+            }
+            
+            // Play the iframe by removing and re-adding it with autoplay
+            if (iframe) {
+                const newIframe = document.createElement('iframe');
+                newIframe.id = 'youtube-player';
+                newIframe.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&mute=0&enablejsapi=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&rel=0`;
+                newIframe.allow = 'autoplay; encrypted-media';
+                newIframe.style.position = 'fixed';
+                newIframe.style.bottom = '0';
+                newIframe.style.right = '0';
+                newIframe.style.width = '10px';
+                newIframe.style.height = '10px';
+                newIframe.style.opacity = '0.1';
+                newIframe.style.pointerEvents = 'none';
+                newIframe.style.zIndex = '1';
+                newIframe.style.border = 'none';
+                iframe.parentNode.replaceChild(newIframe, iframe);
+            }
+            
+            // Play the fallback audio
+            if (audio) {
+                try {
+                    audio.play()
+                        .then(() => console.log('Fallback audio playing'))
+                        .catch(e => console.error('Fallback audio error:', e));
+                } catch (e) {
+                    console.error('Error playing fallback audio:', e);
+                }
+            }
+            
+            musicButton.innerHTML = '<i class="fas fa-pause"></i> BUNDAK';
+            console.log('Audio started');
+        }
+    });
+    
+    // Add fire glow effect to the music button
+    addFireGlow();
+    
+    // Add music container and button to the page
     musicContainer.appendChild(musicButton);
     document.body.appendChild(musicContainer);
+    
+    // Log that background music has been added
+    console.log('Background music added to page');
 }
 
 // Optimized card hover effects with hell theme

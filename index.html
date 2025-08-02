@@ -13,9 +13,10 @@
         <header class="header">
             <h1 class="title">Splunk on Top</h1>
             <a href="https://discord.gg/3ZqQShCH5C" target="_blank" class="discord-btn">
-                <i class="fab fa-discord"></i> Join Discord
+                <i class="fab fa-discord"></i>  Join Discord
             </a>
         </header>
+        
 
         <main class="dashboard">
             <div class="card">
@@ -28,7 +29,7 @@
                         This Website Was Too Exclusive Secure Feature Auto Authenticator Auto Age Changer auto Remove Security
                     </p>
                     <a href="https://app.splunk.gg/u/SplunkProV3" target="_blank" class="action-btn primary">
-                        <i class="fas fa-external-link-alt"></i> SPLUNK
+                        <i class="fa fa-rocket"></i>  SPLUNK
                     </a>
                 </div>
             </div>
@@ -50,7 +51,7 @@ Key Features:
 • Advanced Proxy
                     </p>
                     <a href="https://www.logged.tg/auth/injuriestg" target="_blank" class="action-btn secondary">
-                        <i class="fas fa-external-link-alt"></i> INJURIES 
+                        <i class="fa fa-shield"></i>  INJURIES 
                     </a>
                 </div>
             </div>
@@ -68,7 +69,7 @@ Key Features:
 • Infinite Duration
                     </p>
                     <a href="https://tinyurl.com/2c2asp7j" target="_blank" class="action-btn secondary">
-                        <i class="fas fa-external-link-alt"></i> IMMORTAL
+                        <i class="fa fa-bomb"></i>  IMMORTAL
                     </a>
                 </div>
             </div>
@@ -83,7 +84,7 @@ Key Features:
                         Simple yet powerful Cookie Editor that allow you to quickly create, edit and delete
                     </p>
                     <a href="https://chromewebstore.google.com/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm?utm_campaign=cgagnier.ca&pli=1" target="_blank" class="action-btn secondary">
-                        <i class="fa fa-circle"></i> COOKIE EDITOR
+                        <i class="fa fa-circle"></i>  COOKIE EDITOR
                     </a>
                 </div>
             </div>
@@ -98,7 +99,7 @@ Key Features:
                         This Tools Was For EMAIL REMOVER BYPASS RATE 100% Working Properly
                     </p>
                     <a href="https://tinyurl.com/yu9wxrex" target="_blank" class="action-btn secondary">
-                        <i class="fas fa-unlock"></i> BYPASSER
+                        <i class="fas fa-unlock"></i>  BYPASSER
                     </a>
                 </div>
             </div>
@@ -113,7 +114,7 @@ Key Features:
                         Advanced link hiding tool for enhanced privacy and security protection
                     </p>
                     <a href="https://shortenerv2.vercel.app/" target="_blank" class="action-btn tertiary">
-                        <i class="fas fa-eye"></i> LINK HIDER
+                        <i class="fas fa-eye"></i>  LINK HIDER
                     </a>
                 </div>
             </div>
@@ -137,27 +138,8 @@ Key Features:
     <!-- YouTube API for background music -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // This function will unmute the background music when user interacts with the page
-        document.addEventListener('click', function() {
-            // Try to unmute the YouTube player after user interaction
-            try {
-                if (typeof YT !== 'undefined' && YT.Player && window.player && window.player.unMute) {
-                    // If the player exists and is muted, unmute it
-                    if (window.player.isMuted && window.player.isMuted()) {
-                        window.player.unMute();
-                        window.player.setVolume(30);
-                        
-                        // Update the music button text if it exists
-                        const musicButton = document.querySelector('#music-container button');
-                        if (musicButton) {
-                            musicButton.innerHTML = '<i class="fas fa-pause"></i> DEMON TIME';
-                        }
-                    }
-                }
-            } catch (e) {
-                console.log('Could not unmute player yet:', e);
-            }
-        }, { once: true });
+        // Log when the page is loaded
+        console.log('Page loaded - Bundak by Nopetsallowed will start muted and require user interaction');
     </script>
     <script src="script.js"></script>
 </body>
