@@ -1,11 +1,15 @@
 
-// Hell animation with fire particles, embers, and lava streams
+// Optimized Hell animation with fire particles, embers, and lava streams
 function createHellEffect() {
     const particlesContainer = document.getElementById('particles');
-    const numberOfParticles = 50;
-    const numberOfEmbers = 100;
-    const numberOfLavaStreams = 5;
-
+    // Reduce number of particles for better performance
+    const numberOfParticles = 25; // Reduced from 50
+    const numberOfEmbers = 40;    // Reduced from 100
+    const numberOfLavaStreams = 3; // Reduced from 5
+    
+    // Use document fragment for better performance
+    const fragment = document.createDocumentFragment();
+    
     // Create particles (fire dust)
     for (let i = 0; i < numberOfParticles; i++) {
         const particle = document.createElement('div');
@@ -27,12 +31,12 @@ function createHellEffect() {
         particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
         
         // Random color (red/orange hues for hell effect)
-        const hue = Math.floor(Math.random() * 50) + 0; // Red to orange range
+        const hue = Math.floor(Math.random() * 50);
         const saturation = Math.floor(Math.random() * 20) + 80;
         const lightness = Math.floor(Math.random() * 30) + 50;
         particle.style.backgroundColor = `hsla(${hue}, ${saturation}%, ${lightness}%, 0.7)`;
         
-        particlesContainer.appendChild(particle);
+        fragment.appendChild(particle);
     }
     
     // Create embers
@@ -56,11 +60,19 @@ function createHellEffect() {
         const hue = Math.floor(Math.random() * 30) + 20; // Yellow-orange range
         ember.style.backgroundColor = `hsla(${hue}, 100%, 60%, 0.9)`;
         
-        particlesContainer.appendChild(ember);
+        fragment.appendChild(ember);
     }
     
-    // Create lava streams with random intervals
+    // Append all elements at once for better performance
+    particlesContainer.appendChild(fragment);
+    
+    // Create lava streams with random intervals - using requestAnimationFrame for better performance
+    let lavaStreamCount = 0;
+    const maxLavaStreams = 10; // Limit total number of streams created
+    
     function createLavaStream() {
+        if (lavaStreamCount >= maxLavaStreams) return;
+        
         const lavaStream = document.createElement('div');
         lavaStream.className = 'shooting-star';
         
@@ -75,12 +87,18 @@ function createHellEffect() {
         lavaStream.style.background = 'linear-gradient(45deg, rgba(255,0,0,0.8), rgba(255,165,0,0.6))';
         
         particlesContainer.appendChild(lavaStream);
+        lavaStreamCount++;
         
         // Remove lava stream after animation completes
         setTimeout(() => {
-            lavaStream.remove();
-            // Create a new one
-            setTimeout(createLavaStream, Math.random() * 3000 + 1000);
+            if (lavaStream.parentNode) {
+                lavaStream.remove();
+            }
+            lavaStreamCount--;
+            // Create a new one with longer delay
+            if (document.visibilityState !== 'hidden') {
+                setTimeout(createLavaStream, Math.random() * 4000 + 2000);
+            }
         }, 4000);
     }
     
@@ -105,11 +123,11 @@ function addBackgroundMusic() {
     audioElement.volume = 0.3; // Set initial volume to 30%
     
     // YouTube embed as source (using YouTube's iframe API)
-    const youtubeID = 'GkQn5vNoc24'; // Bundak Sa Letra by NoPetsAllowed
+    const youtubeID = 'R9zOeysfyMQ'; // Nateman - DEMON TIME feat. J. Cipher
     
     // Create a button to toggle music
     const musicButton = document.createElement('button');
-    musicButton.innerHTML = '<i class="fas fa-pause"></i> Pause Music'; // Changed to show pause initially
+    musicButton.innerHTML = '<i class="fas fa-pause"></i> DEMON TIME'; // Updated for the new song
     musicButton.style.background = 'linear-gradient(45deg, #aa0000, #660000)';
     musicButton.style.color = 'white';
     musicButton.style.border = '1px solid rgba(255, 100, 0, 0.4)';
@@ -172,25 +190,25 @@ function addBackgroundMusic() {
         player.playVideo();
         
         // Update button text to show music is muted initially
-        musicButton.innerHTML = '<i class="fas fa-volume-mute"></i> Unmute Music';
+        musicButton.innerHTML = '<i class="fas fa-volume-mute"></i> UNMUTE DEMON TIME';
         
         // Music button click handler
         musicButton.addEventListener('click', function() {
             if (player.getPlayerState() === YT.PlayerState.PLAYING && !player.isMuted()) {
                 // If playing and not muted, pause the video
                 player.pauseVideo();
-                musicButton.innerHTML = '<i class="fas fa-music"></i> Play Music';
+                musicButton.innerHTML = '<i class="fas fa-music"></i> PLAY DEMON TIME';
             } else if (player.getPlayerState() === YT.PlayerState.PLAYING && player.isMuted()) {
                 // If playing but muted, unmute the video
                 player.unMute();
                 player.setVolume(30); // Set to 30% volume
-                musicButton.innerHTML = '<i class="fas fa-pause"></i> Pause Music';
+                musicButton.innerHTML = '<i class="fas fa-pause"></i> DEMON TIME';
             } else if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
                 // If not playing, play and unmute
                 player.playVideo();
                 player.unMute();
                 player.setVolume(30); // Set to 30% volume
-                musicButton.innerHTML = '<i class="fas fa-pause"></i> Pause Music';
+                musicButton.innerHTML = '<i class="fas fa-pause"></i> DEMON TIME';
             }
         });
     }
@@ -200,126 +218,184 @@ function addBackgroundMusic() {
     document.body.appendChild(musicContainer);
 }
 
-// Card hover effects with hell theme
+// Optimized card hover effects with hell theme
 function addCardEffects() {
     const cards = document.querySelectorAll('.card');
     
-    cards.forEach(card => {
-        // Add burning ember particles to each card
-        const addEmbers = (card) => {
-            for (let i = 0; i < 5; i++) {
-                const ember = document.createElement('div');
-                ember.className = 'card-ember';
-                ember.style.position = 'absolute';
-                ember.style.width = '3px';
-                ember.style.height = '3px';
-                ember.style.backgroundColor = `hsl(${Math.floor(Math.random() * 30)}, 100%, 50%)`;
-                ember.style.borderRadius = '50%';
-                ember.style.bottom = '0';
-                ember.style.left = `${Math.random() * 100}%`;
-                ember.style.opacity = '0';
-                ember.style.zIndex = '1';
-                ember.style.boxShadow = '0 0 10px rgba(255, 50, 0, 0.8), 0 0 20px rgba(255, 50, 0, 0.4)';
-                ember.style.animation = `emberRise ${2 + Math.random() * 2}s infinite`;
-                ember.style.animationDelay = `${Math.random() * 2}s`;
-                card.appendChild(ember);
-            }
-        };
-        
-        // Add ember rise animation if it doesn't exist
-        if (!document.querySelector('#ember-animation')) {
-            const style = document.createElement('style');
-            style.id = 'ember-animation';
-            style.textContent = `
-                @keyframes emberRise {
-                    0% {
-                        transform: translateY(0) scale(1);
-                        opacity: 0;
-                    }
-                    10% {
-                        opacity: 0.8;
-                    }
-                    90% {
-                        opacity: 0.4;
-                    }
-                    100% {
-                        transform: translateY(-100px) scale(0);
-                        opacity: 0;
-                    }
+    // Add ember rise animation if it doesn't exist - do this only once
+    if (!document.querySelector('#ember-animation')) {
+        const style = document.createElement('style');
+        style.id = 'ember-animation';
+        style.textContent = `
+            @keyframes emberRise {
+                0% {
+                    transform: translateY(0) scale(1);
+                    opacity: 0;
                 }
-            `;
-            document.head.appendChild(style);
+                10% {
+                    opacity: 0.8;
+                }
+                90% {
+                    opacity: 0.4;
+                }
+                100% {
+                    transform: translateY(-100px) scale(0);
+                    opacity: 0;
+                }
+            }
+            
+            .card-ember {
+                position: absolute;
+                width: 3px;
+                height: 3px;
+                border-radius: 50%;
+                bottom: 0;
+                opacity: 0;
+                z-index: 1;
+                box-shadow: 0 0 10px rgba(255, 50, 0, 0.8), 0 0 20px rgba(255, 50, 0, 0.4);
+                animation: emberRise 4s infinite;
+            }
+            
+            .card-ember-fast {
+                animation-duration: 2s !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Use event delegation for better performance
+    const container = document.querySelector('.dashboard');
+    if (!container) return;
+    
+    // Add embers to cards only once and use a smaller number
+    cards.forEach(card => {
+        // Create a document fragment for better performance
+        const fragment = document.createDocumentFragment();
+        
+        // Reduce number of embers per card
+        for (let i = 0; i < 3; i++) { // Reduced from 5
+            const ember = document.createElement('div');
+            ember.className = 'card-ember';
+            ember.style.backgroundColor = `hsl(${Math.floor(Math.random() * 30)}, 100%, 50%)`;
+            ember.style.left = `${Math.random() * 100}%`;
+            ember.style.animationDelay = `${Math.random() * 2}s`;
+            fragment.appendChild(ember);
         }
         
-        addEmbers(card);
-        
-        card.addEventListener('mouseenter', function() {
-            this.style.background = 'rgba(80, 20, 0, 0.8)';
-            this.style.boxShadow = '0 0 30px rgba(255, 50, 0, 0.5), 0 0 50px rgba(255, 50, 0, 0.3)';
-            this.style.transform = 'translateY(-5px)';
-            
-            // Increase ember animation speed on hover
-            const embers = this.querySelectorAll('.card-ember');
-            embers.forEach(ember => {
-                ember.style.animationDuration = `${1 + Math.random()}s`;
-            });
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.background = 'rgba(40, 10, 10, 0.8)';
-            this.style.boxShadow = '0 0 15px rgba(255, 30, 0, 0.3)';
-            this.style.transform = 'translateY(0)';
-            
-            // Reset ember animation speed
-            const embers = this.querySelectorAll('.card-ember');
-            embers.forEach(ember => {
-                ember.style.animationDuration = `${2 + Math.random() * 2}s`;
-            });
-        });
+        card.appendChild(fragment);
     });
+    
+    // Use event delegation for hover effects
+    container.addEventListener('mouseenter', function(e) {
+        const card = e.target.closest('.card');
+        if (!card) return;
+        
+        // Use classList for better performance
+        card.style.background = 'rgba(80, 20, 0, 0.8)';
+        card.style.boxShadow = '0 0 30px rgba(255, 50, 0, 0.5), 0 0 50px rgba(255, 50, 0, 0.3)';
+        card.style.transform = 'translateY(-5px)';
+        
+        // Use classList instead of style changes for better performance
+        const embers = card.querySelectorAll('.card-ember');
+        embers.forEach(ember => {
+            ember.classList.add('card-ember-fast');
+        });
+    }, true);
+    
+    container.addEventListener('mouseleave', function(e) {
+        const card = e.target.closest('.card');
+        if (!card) return;
+        
+        card.style.background = 'rgba(40, 10, 10, 0.8)';
+        card.style.boxShadow = '0 0 15px rgba(255, 30, 0, 0.3)';
+        card.style.transform = 'translateY(0)';
+        
+        const embers = card.querySelectorAll('.card-ember');
+        embers.forEach(ember => {
+            ember.classList.remove('card-ember-fast');
+        });
+    }, true);
 }
 
-// Button click effects with hell theme
+// Optimized button click effects with hell theme
 function addButtonEffects() {
-    const buttons = document.querySelectorAll('.action-btn, .discord-btn');
+    // Use CSS classes instead of inline styles for better performance
+    if (!document.querySelector('#button-effects-style')) {
+        const style = document.createElement('style');
+        style.id = 'button-effects-style';
+        style.textContent = `
+            .action-btn, .discord-btn {
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .btn-hover {
+                background: linear-gradient(45deg, #ff3300, #aa0000) !important;
+                box-shadow: 0 0 20px rgba(255, 50, 0, 0.6), 0 0 40px rgba(255, 50, 0, 0.3) !important;
+                transform: translateY(-2px) scale(1.03) !important;
+            }
+            
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 100, 0, 0.4);
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                pointer-events: none;
+                box-shadow: 0 0 20px rgba(255, 50, 0, 0.6), 0 0 40px rgba(255, 50, 0, 0.3);
+            }
+        `;
+        document.head.appendChild(style);
+    }
     
-    buttons.forEach(button => {
-        // Add position relative for ripple effect
-        button.style.position = 'relative';
-        button.style.overflow = 'hidden';
+    // Use event delegation for better performance
+    const container = document.body;
+    
+    // Handle mouseenter event with delegation
+    container.addEventListener('mouseenter', function(e) {
+        const button = e.target.closest('.action-btn, .discord-btn');
+        if (!button) return;
         
-        button.addEventListener('mouseenter', function() {
-            this.style.background = 'linear-gradient(45deg, #ff3300, #aa0000)';
-            this.style.boxShadow = '0 0 20px rgba(255, 50, 0, 0.6), 0 0 40px rgba(255, 50, 0, 0.3)';
-            this.style.transform = 'translateY(-2px) scale(1.03)';
-        });
+        button.classList.add('btn-hover');
+    }, true);
+    
+    // Handle mouseleave event with delegation
+    container.addEventListener('mouseleave', function(e) {
+        const button = e.target.closest('.action-btn, .discord-btn');
+        if (!button) return;
         
-        button.addEventListener('mouseleave', function() {
-            this.style.background = 'linear-gradient(45deg, #aa0000, #660000)';
-            this.style.boxShadow = '0 0 10px rgba(255, 30, 0, 0.4)';
-            this.style.transform = 'translateY(0) scale(1)';
-        });
+        button.classList.remove('btn-hover');
+    }, true);
+    
+    // Handle click event with delegation and throttling
+    let isCreatingRipple = false;
+    container.addEventListener('click', function(e) {
+        const button = e.target.closest('.action-btn, .discord-btn');
+        if (!button || isCreatingRipple) return;
         
-        button.addEventListener('click', function(e) {
-            // Create ripple effect
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            ripple.style.backgroundColor = 'rgba(255, 100, 0, 0.4)';
-            ripple.classList.add('ripple');
-            
-            this.appendChild(ripple);
-            
-            setTimeout(() => {
+        isCreatingRipple = true;
+        
+        // Create ripple effect
+        const ripple = document.createElement('span');
+        const rect = button.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple');
+        
+        button.appendChild(ripple);
+        
+        // Remove ripple after animation completes
+        setTimeout(() => {
+            if (ripple.parentNode) {
                 ripple.remove();
-            }, 600);
-        });
+            }
+            isCreatingRipple = false;
+        }, 600);
     });
 }
 
@@ -664,39 +740,56 @@ function addDropdownEffect() {
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    createHellEffect();
-    addCardEffects();
-    addButtonEffects();
+    // Check if device is mobile or low-end (simplified detection)
+    const isMobileOrLowEnd = window.innerWidth <= 768 || 
+                            navigator.hardwareConcurrency <= 4 || 
+                            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Initialize essential effects first
     addSmoothScroll();
-    addTitleEffect();
-    addBackgroundMusic();
+    addDropdownEffect();
     
-    if (typeof addDropdownEffect === 'function') {
-        addDropdownEffect();
-    }
-    
-    // Add CSS for ripple effect
+    // Add CSS for ripple effect with optimized animation
     const style = document.createElement('style');
     style.textContent = `
         .ripple {
             position: absolute;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 51, 0, 0.3);
             transform: scale(0);
-            animation: ripple-animation 0.6s linear;
+            animation: ripple 0.8s linear;
             pointer-events: none;
         }
         
-        @keyframes ripple-animation {
+        @keyframes ripple {
             to {
-                transform: scale(4);
+                transform: scale(3);
                 opacity: 0;
             }
         }
     `;
     document.head.appendChild(style);
     
-    // Show loading animation
+    // Defer non-essential effects
+    setTimeout(() => {
+        addButtonEffects();
+        addTitleEffect();
+        addBackgroundMusic();
+        
+        // Only add heavy visual effects on non-mobile/high-end devices
+        if (!isMobileOrLowEnd) {
+            createHellEffect();
+            addCardEffects();
+        } else {
+            // Add minimal card styling for mobile/low-end devices
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.boxShadow = '0 5px 15px rgba(255, 30, 0, 0.3)';
+                card.style.border = '1px solid rgba(255, 30, 0, 0.4)';
+            });
+        }
+    }, 100); // Short delay to prioritize initial render
+    
+    // Show loading animation with optimized rendering
     const loadingOverlay = document.createElement('div');
     loadingOverlay.style.position = 'fixed';
     loadingOverlay.style.top = '0';
@@ -715,13 +808,15 @@ document.addEventListener('DOMContentLoaded', function() {
     loadingText.style.color = '#ff3300';
     loadingText.style.fontSize = '2rem';
     loadingText.style.fontWeight = 'bold';
-    loadingText.style.textShadow = '0 0 10px rgba(255, 51, 0, 0.7), 0 0 20px rgba(255, 51, 0, 0.4)';
+    loadingText.style.textShadow = '0 0 10px rgba(255, 51, 0, 0.7)';
     loadingText.style.textTransform = 'uppercase';
     loadingText.style.letterSpacing = '2px';
     loadingOverlay.appendChild(loadingText);
     
-    // Add fire particles to loading screen
-    for (let i = 0; i < 20; i++) {
+    // Add fire particles to loading screen - using document fragment for better performance
+    const particleFragment = document.createDocumentFragment();
+    // Reduced number of particles from 20 to 10 for better performance
+    for (let i = 0; i < 10; i++) {
         const particle = document.createElement('div');
         particle.style.position = 'absolute';
         particle.style.width = '3px';
@@ -731,11 +826,13 @@ document.addEventListener('DOMContentLoaded', function() {
         particle.style.bottom = '0';
         particle.style.left = `${Math.random() * 100}%`;
         particle.style.opacity = '0';
-        particle.style.animation = `emberRise ${2 + Math.random() * 2}s infinite`;
+        particle.style.animation = `emberRise ${3 + Math.random()}s infinite`;
         particle.style.animationDelay = `${Math.random() * 2}s`;
-        particle.style.boxShadow = '0 0 10px rgba(255, 50, 0, 0.8), 0 0 20px rgba(255, 50, 0, 0.4)';
-        loadingOverlay.appendChild(particle);
+        // Simplified shadow for better performance
+        particle.style.boxShadow = '0 0 10px rgba(255, 50, 0, 0.6)';
+        particleFragment.appendChild(particle);
     }
+    loadingOverlay.appendChild(particleFragment);
     
     // Simulate loading time
     setTimeout(() => {
