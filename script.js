@@ -117,14 +117,15 @@ function addBackgroundMusic() {
     musicContainer.style.bottom = '20px';
     musicContainer.style.right = '20px';
     musicContainer.style.zIndex = '1000';
+    playerIframe.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&mute=0&enablejsapi=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&rel=0`;playerVars: {
+
+}
     
-    // Create a hidden YouTube player for the music
-    const youtubeID = 'GkQn5vNoc24'; // Bundak sa letra - Nopetsallowed
     
-    // Create a direct iframe for the YouTube player
+    // Create a direct iframe for the YouTube player with autoplay and no mute
      const playerIframe = document.createElement('iframe');
      playerIframe.id = 'youtube-player';
-     playerIframe.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&mute=1&enablejsapi=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&rel=0`;
+     playerIframe.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&mute=0&enablejsapi=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&rel=0`;
      playerIframe.allow = 'autoplay; encrypted-media';
      playerIframe.style.position = 'fixed';
      playerIframe.style.bottom = '20px';
@@ -137,23 +138,17 @@ function addBackgroundMusic() {
      playerIframe.style.border = 'none';
      document.body.appendChild(playerIframe);
     
+    
     // Create a backup div for the YouTube API player
     const playerDiv = document.createElement('div');
     playerDiv.id = 'youtube-api-player';
     playerDiv.style.display = 'none';
     document.body.appendChild(playerDiv);
-    
-    // Create a fallback audio element
-    const audioElement = document.createElement('audio');
-    audioElement.id = 'fallback-audio';
-    audioElement.src = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'; // Fallback audio
-    audioElement.style.display = 'none';
-    audioElement.loop = true;
-    document.body.appendChild(audioElement);
+    playerIframe.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&mute=0&enablejsapi=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&rel=0`;playerIframe.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&mute=0&enablejsapi=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&rel=0`;
     
     // Create a button to toggle music
     const musicButton = document.createElement('button');
-    musicButton.innerHTML = '<i class="fas fa-volume-mute"></i> UNMUTE BUNDAK';
+    musicButton.innerHTML = '<i class="fas fa-pause"></i> BUNDAK';
     musicButton.style.background = 'linear-gradient(45deg, #aa0000, #660000)';
     musicButton.style.color = 'white';
     musicButton.style.border = '1px solid rgba(255, 100, 0, 0.4)';
@@ -209,7 +204,7 @@ function addBackgroundMusic() {
                 'modestbranding': 1,
                 'iv_load_policy': 3,
                 'rel': 0,
-                'mute': 1  // Start muted to help with autoplay
+                'mute': 0  // Start unmuted for autoplay
             },
             events: {
                 'onReady': onPlayerReady,
@@ -224,15 +219,17 @@ function addBackgroundMusic() {
         console.log('YouTube player ready');
         player.setVolume(30); // Set volume to 30%
         
-        // Try to play immediately (will be muted due to autoplay restrictions)
+        // Try to play immediately and unmuted
         try {
+            player.unMute();
             player.playVideo();
-            console.log('Initial play attempt (will be muted)');
+            console.log('Initial play attempt (unmuted)');
+            musicButton.innerHTML = '<i class="fas fa-pause"></i> BUNDAK';
         } catch (e) {
             console.error('Error during initial play attempt:', e);
         }
         
-        // Add event listener to unmute audio on first user interaction with the page
+        // Fallback for browsers that block autoplay with sound
         document.addEventListener('click', function() {
             console.log('Document clicked - attempting to play audio');
             
@@ -996,7 +993,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.appendChild(loadingOverlay);
     
     const loadingText = document.createElement('div');
-    loadingText.textContent = 'Loading SplunkPro Hell Edition...';
     loadingText.style.color = '#ff3300';
     loadingText.style.fontSize = '2rem';
     loadingText.style.fontWeight = 'bold';
