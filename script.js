@@ -1,12 +1,12 @@
 
-// Galaxy animation with particles, stars, and shooting stars
-function createGalaxyEffect() {
+// Hell animation with fire particles, embers, and lava streams
+function createHellEffect() {
     const particlesContainer = document.getElementById('particles');
     const numberOfParticles = 50;
-    const numberOfStars = 100;
-    const numberOfShootingStars = 5;
+    const numberOfEmbers = 100;
+    const numberOfLavaStreams = 5;
 
-    // Create particles (dust)
+    // Create particles (fire dust)
     for (let i = 0; i < numberOfParticles; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
@@ -26,60 +26,67 @@ function createGalaxyEffect() {
         // Random animation duration
         particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
         
-        // Random color (purplish hues for galaxy effect)
-        const hue = Math.floor(Math.random() * 60) + 240; // Blue to purple range
-        const saturation = Math.floor(Math.random() * 50) + 50;
-        const lightness = Math.floor(Math.random() * 30) + 70;
+        // Random color (red/orange hues for hell effect)
+        const hue = Math.floor(Math.random() * 50) + 0; // Red to orange range
+        const saturation = Math.floor(Math.random() * 20) + 80;
+        const lightness = Math.floor(Math.random() * 30) + 50;
         particle.style.backgroundColor = `hsla(${hue}, ${saturation}%, ${lightness}%, 0.7)`;
         
         particlesContainer.appendChild(particle);
     }
     
-    // Create stars
-    for (let i = 0; i < numberOfStars; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
+    // Create embers
+    for (let i = 0; i < numberOfEmbers; i++) {
+        const ember = document.createElement('div');
+        ember.className = 'star';
         
         // Random size (smaller than particles)
         const size = Math.random() * 2 + 0.5;
-        star.style.width = size + 'px';
-        star.style.height = size + 'px';
+        ember.style.width = size + 'px';
+        ember.style.height = size + 'px';
         
         // Random position
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
+        ember.style.left = Math.random() * 100 + '%';
+        ember.style.top = Math.random() * 100 + '%';
         
         // Random animation delay
-        star.style.animationDelay = Math.random() * 3 + 's';
+        ember.style.animationDelay = Math.random() * 3 + 's';
         
-        particlesContainer.appendChild(star);
+        // Random ember color (yellow to orange)
+        const hue = Math.floor(Math.random() * 30) + 20; // Yellow-orange range
+        ember.style.backgroundColor = `hsla(${hue}, 100%, 60%, 0.9)`;
+        
+        particlesContainer.appendChild(ember);
     }
     
-    // Create shooting stars with random intervals
-    function createShootingStar() {
-        const shootingStar = document.createElement('div');
-        shootingStar.className = 'shooting-star';
+    // Create lava streams with random intervals
+    function createLavaStream() {
+        const lavaStream = document.createElement('div');
+        lavaStream.className = 'shooting-star';
         
-        // Random position (always starts from left side)
-        shootingStar.style.left = Math.random() * 30 + '%';
-        shootingStar.style.top = Math.random() * 50 + '%';
+        // Random position (always starts from bottom side)
+        lavaStream.style.left = Math.random() * 80 + '%';
+        lavaStream.style.top = Math.random() * 30 + 70 + '%';
         
         // Random animation duration
-        shootingStar.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        lavaStream.style.animationDuration = (Math.random() * 2 + 2) + 's';
         
-        particlesContainer.appendChild(shootingStar);
+        // Add lava color
+        lavaStream.style.background = 'linear-gradient(45deg, rgba(255,0,0,0.8), rgba(255,165,0,0.6))';
         
-        // Remove shooting star after animation completes
+        particlesContainer.appendChild(lavaStream);
+        
+        // Remove lava stream after animation completes
         setTimeout(() => {
-            shootingStar.remove();
+            lavaStream.remove();
             // Create a new one
-            setTimeout(createShootingStar, Math.random() * 5000 + 2000);
+            setTimeout(createLavaStream, Math.random() * 3000 + 1000);
         }, 4000);
     }
     
-    // Initialize shooting stars with random delays
-    for (let i = 0; i < numberOfShootingStars; i++) {
-        setTimeout(createShootingStar, Math.random() * 5000);
+    // Initialize lava streams with random delays
+    for (let i = 0; i < numberOfLavaStreams; i++) {
+        setTimeout(createLavaStream, Math.random() * 5000);
     }
 }
 
@@ -103,16 +110,37 @@ function addBackgroundMusic() {
     // Create a button to toggle music
     const musicButton = document.createElement('button');
     musicButton.innerHTML = '<i class="fas fa-pause"></i> Pause Music'; // Changed to show pause initially
-    musicButton.style.background = 'linear-gradient(45deg, #8a2be2, #4b0082)';
+    musicButton.style.background = 'linear-gradient(45deg, #aa0000, #660000)';
     musicButton.style.color = 'white';
-    musicButton.style.border = 'none';
+    musicButton.style.border = '1px solid rgba(255, 100, 0, 0.4)';
     musicButton.style.borderRadius = '25px';
     musicButton.style.padding = '10px 20px';
     musicButton.style.cursor = 'pointer';
-    musicButton.style.boxShadow = '0 4px 15px rgba(138, 43, 226, 0.3)';
+    musicButton.style.boxShadow = '0 4px 15px rgba(255, 30, 0, 0.4), 0 0 20px rgba(255, 30, 0, 0.2)';
     musicButton.style.display = 'flex';
     musicButton.style.alignItems = 'center';
     musicButton.style.gap = '8px';
+    musicButton.style.textTransform = 'uppercase';
+    musicButton.style.letterSpacing = '1px';
+    musicButton.style.position = 'relative';
+    musicButton.style.overflow = 'hidden';
+    
+    // Add fire glow effect
+    const addFireGlow = () => {
+        const fireGlow = document.createElement('div');
+        fireGlow.style.position = 'absolute';
+        fireGlow.style.top = '0';
+        fireGlow.style.left = '0';
+        fireGlow.style.width = '100%';
+        fireGlow.style.height = '100%';
+        fireGlow.style.background = 'linear-gradient(90deg, transparent, rgba(255, 100, 0, 0.2), transparent)';
+        fireGlow.style.animation = 'fireGlow 3s infinite alternate';
+        fireGlow.style.zIndex = '-1';
+        fireGlow.style.borderRadius = '25px';
+        musicButton.appendChild(fireGlow);
+    };
+    
+    addFireGlow();
     
     // Add YouTube iframe (hidden) with autoplay=1 and muted=1 (required for autoplay in most browsers)
     const youtubeIframe = document.createElement('iframe');
@@ -172,30 +200,106 @@ function addBackgroundMusic() {
     document.body.appendChild(musicContainer);
 }
 
-// Card hover effects with galaxy theme
+// Card hover effects with hell theme
 function addCardEffects() {
     const cards = document.querySelectorAll('.card');
     
     cards.forEach(card => {
+        // Add burning ember particles to each card
+        const addEmbers = (card) => {
+            for (let i = 0; i < 5; i++) {
+                const ember = document.createElement('div');
+                ember.className = 'card-ember';
+                ember.style.position = 'absolute';
+                ember.style.width = '3px';
+                ember.style.height = '3px';
+                ember.style.backgroundColor = `hsl(${Math.floor(Math.random() * 30)}, 100%, 50%)`;
+                ember.style.borderRadius = '50%';
+                ember.style.bottom = '0';
+                ember.style.left = `${Math.random() * 100}%`;
+                ember.style.opacity = '0';
+                ember.style.zIndex = '1';
+                ember.style.boxShadow = '0 0 10px rgba(255, 50, 0, 0.8), 0 0 20px rgba(255, 50, 0, 0.4)';
+                ember.style.animation = `emberRise ${2 + Math.random() * 2}s infinite`;
+                ember.style.animationDelay = `${Math.random() * 2}s`;
+                card.appendChild(ember);
+            }
+        };
+        
+        // Add ember rise animation if it doesn't exist
+        if (!document.querySelector('#ember-animation')) {
+            const style = document.createElement('style');
+            style.id = 'ember-animation';
+            style.textContent = `
+                @keyframes emberRise {
+                    0% {
+                        transform: translateY(0) scale(1);
+                        opacity: 0;
+                    }
+                    10% {
+                        opacity: 0.8;
+                    }
+                    90% {
+                        opacity: 0.4;
+                    }
+                    100% {
+                        transform: translateY(-100px) scale(0);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        addEmbers(card);
+        
         card.addEventListener('mouseenter', function() {
-            this.style.background = 'rgba(138, 43, 226, 0.15)';
-            this.style.boxShadow = '0 0 20px rgba(138, 43, 226, 0.3)';
+            this.style.background = 'rgba(80, 20, 0, 0.8)';
+            this.style.boxShadow = '0 0 30px rgba(255, 50, 0, 0.5), 0 0 50px rgba(255, 50, 0, 0.3)';
             this.style.transform = 'translateY(-5px)';
+            
+            // Increase ember animation speed on hover
+            const embers = this.querySelectorAll('.card-ember');
+            embers.forEach(ember => {
+                ember.style.animationDuration = `${1 + Math.random()}s`;
+            });
         });
         
         card.addEventListener('mouseleave', function() {
-            this.style.background = 'rgba(255, 255, 255, 0.05)';
-            this.style.boxShadow = 'none';
+            this.style.background = 'rgba(40, 10, 10, 0.8)';
+            this.style.boxShadow = '0 0 15px rgba(255, 30, 0, 0.3)';
             this.style.transform = 'translateY(0)';
+            
+            // Reset ember animation speed
+            const embers = this.querySelectorAll('.card-ember');
+            embers.forEach(ember => {
+                ember.style.animationDuration = `${2 + Math.random() * 2}s`;
+            });
         });
     });
 }
 
-// Button click effects
+// Button click effects with hell theme
 function addButtonEffects() {
     const buttons = document.querySelectorAll('.action-btn, .discord-btn');
     
     buttons.forEach(button => {
+        // Add position relative for ripple effect
+        button.style.position = 'relative';
+        button.style.overflow = 'hidden';
+        
+        button.addEventListener('mouseenter', function() {
+            this.style.background = 'linear-gradient(45deg, #ff3300, #aa0000)';
+            this.style.boxShadow = '0 0 20px rgba(255, 50, 0, 0.6), 0 0 40px rgba(255, 50, 0, 0.3)';
+            this.style.transform = 'translateY(-2px) scale(1.03)';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.background = 'linear-gradient(45deg, #aa0000, #660000)';
+            this.style.boxShadow = '0 0 10px rgba(255, 30, 0, 0.4)';
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+        
         button.addEventListener('click', function(e) {
             // Create ripple effect
             const ripple = document.createElement('span');
@@ -207,6 +311,7 @@ function addButtonEffects() {
             ripple.style.width = ripple.style.height = size + 'px';
             ripple.style.left = x + 'px';
             ripple.style.top = y + 'px';
+            ripple.style.backgroundColor = 'rgba(255, 100, 0, 0.4)';
             ripple.classList.add('ripple');
             
             this.appendChild(ripple);
@@ -559,7 +664,7 @@ function addDropdownEffect() {
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    createGalaxyEffect();
+    createHellEffect();
     addCardEffects();
     addButtonEffects();
     addSmoothScroll();
@@ -590,6 +695,56 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     `;
     document.head.appendChild(style);
+    
+    // Show loading animation
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.style.position = 'fixed';
+    loadingOverlay.style.top = '0';
+    loadingOverlay.style.left = '0';
+    loadingOverlay.style.width = '100%';
+    loadingOverlay.style.height = '100%';
+    loadingOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+    loadingOverlay.style.display = 'flex';
+    loadingOverlay.style.justifyContent = 'center';
+    loadingOverlay.style.alignItems = 'center';
+    loadingOverlay.style.zIndex = '9999';
+    document.body.appendChild(loadingOverlay);
+    
+    const loadingText = document.createElement('div');
+    loadingText.textContent = 'Loading SplunkPro Hell Edition...';
+    loadingText.style.color = '#ff3300';
+    loadingText.style.fontSize = '2rem';
+    loadingText.style.fontWeight = 'bold';
+    loadingText.style.textShadow = '0 0 10px rgba(255, 51, 0, 0.7), 0 0 20px rgba(255, 51, 0, 0.4)';
+    loadingText.style.textTransform = 'uppercase';
+    loadingText.style.letterSpacing = '2px';
+    loadingOverlay.appendChild(loadingText);
+    
+    // Add fire particles to loading screen
+    for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.width = '3px';
+        particle.style.height = '3px';
+        particle.style.backgroundColor = `hsl(${Math.floor(Math.random() * 30)}, 100%, 50%)`;
+        particle.style.borderRadius = '50%';
+        particle.style.bottom = '0';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.opacity = '0';
+        particle.style.animation = `emberRise ${2 + Math.random() * 2}s infinite`;
+        particle.style.animationDelay = `${Math.random() * 2}s`;
+        particle.style.boxShadow = '0 0 10px rgba(255, 50, 0, 0.8), 0 0 20px rgba(255, 50, 0, 0.4)';
+        loadingOverlay.appendChild(particle);
+    }
+    
+    // Simulate loading time
+    setTimeout(() => {
+        loadingOverlay.style.opacity = '0';
+        loadingOverlay.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+            loadingOverlay.remove();
+        }, 500);
+    }, 1500);
 });
 
 // Add loading animation
